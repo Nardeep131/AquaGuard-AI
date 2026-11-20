@@ -1,3 +1,4 @@
+import uuid
 import pytest
 from fastapi.testclient import TestClient
 from backend.app.main import app
@@ -11,9 +12,10 @@ def setup_db():
     init_db()
 
 def test_register_and_login():
+    unique_email = f"engineer_{uuid.uuid4().hex[:6]}@aquaguard.io"
     # Register Water Quality Engineer
     res = client.post("/api/auth/register", json={
-        "email": "engineer@aquaguard.io",
+        "email": unique_email,
         "password": "Password123!",
         "full_name": "Dr. Ananya Sharma",
         "role": "water_quality_engineer",
@@ -21,13 +23,13 @@ def test_register_and_login():
     })
     assert res.status_code == 201
     data = res.json()
-    assert data["email"] == "engineer@aquaguard.io"
+    assert data["email"] == unique_email
     assert data["role"] == "water_quality_engineer"
     assert "id" in data
 
     # Login
     login_res = client.post("/api/auth/login", data={
-        "username": "engineer@aquaguard.io",
+        "username": unique_email,
         "password": "Password123!"
     })
     assert login_res.status_code == 200
@@ -38,23 +40,33 @@ def test_register_and_login():
     # Access current user info
     me_res = client.get("/api/auth/me", headers={"Authorization": f"Bearer {token}"})
     assert me_res.status_code == 200
-    assert me_res.json()["email"] == "engineer@aquaguard.io"
+    assert me_res.json()["email"] == unique_email
     assert me_res.json()["role"] == "water_quality_engineer"
 
 def test_duplicate_registration_fails():
-    res = client.post("/api/auth/register", json={
-        "email": "engineer@aquaguard.io",
+    unique_email = f"dup_{uuid.uuid4().hex[:6]}@aquaguard.io"
+    res1 = client.post("/api/auth/register", json={
+        "email": unique_email,
+        "password": "Password123!",
+        "full_name": "User One",
+        "role": "water_quality_engineer",
+        "organization": "Delhi Jal Board"
+    })
+    assert res1.status_code == 201
+
+    res2 = client.post("/api/auth/register", json={
+        "email": unique_email,
         "password": "Password123!",
         "full_name": "Duplicate User",
         "role": "water_quality_engineer",
         "organization": "Delhi Jal Board"
     })
-    assert res.status_code == 400
-    assert "already registered" in res.json()["detail"].lower()
+    assert res2.status_code == 400
+    assert "already registered" in res2.json()["detail"].lower()
 
 def test_invalid_credentials():
     login_res = client.post("/api/auth/login", data={
-        "username": "engineer@aquaguard.io",
+        "username": "non_existent@aquaguard.io",
         "password": "WrongPassword!"
     })
     assert login_res.status_code == 401

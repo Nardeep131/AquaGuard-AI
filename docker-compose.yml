@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: aquaguard-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+      - DATABASE_URL=sqlite:///./aquaguard.db
+      - SECRET_KEY=aquaguard-ai-super-secret-production-quality-jwt-key
+    volumes:
+      - ./backend/ml/models:/app/backend/ml/models
+      - ./aquaguard.db:/app/aquaguard.db
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: aquaguard-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
