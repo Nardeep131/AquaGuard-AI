@@ -6,6 +6,7 @@ from backend.app.database import init_db
 from backend.app.api.auth_routes import router as auth_router
 from backend.app.api.water_routes import router as water_router
 from backend.app.api.dashboard_routes import router as dashboard_router
+from backend.app.api.report_routes import router as report_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -31,6 +32,7 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(water_router)
 app.include_router(dashboard_router)
+app.include_router(report_router)
 
 @app.get("/health")
 def healthcheck():
