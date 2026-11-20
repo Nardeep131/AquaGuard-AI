@@ -373,15 +373,14 @@ export const EnvironmentalWaterModule: React.FC = () => {
                       </div>
                     </div>
 
-                    <a
-                      href={waterService.getReportPdfUrl(result.sample_uid)}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30 text-xs font-semibold mt-2 transition-all"
+                    <button
+                      type="button"
+                      onClick={() => waterService.downloadReportPdf(result.sample_uid)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30 text-xs font-semibold mt-2 transition-all cursor-pointer"
                     >
                       <Download className="w-3.5 h-3.5" />
                       Download Environmental Audit
-                    </a>
+                    </button>
                   </div>
                 </div>
 

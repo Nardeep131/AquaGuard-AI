@@ -135,15 +135,14 @@ export const HistoryAndReports: React.FC = () => {
                       {new Date(s.collected_at).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <a
-                        href={waterService.getReportPdfUrl(s.sample_uid)}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/30 text-xs font-semibold transition-all"
+                      <button
+                        type="button"
+                        onClick={() => waterService.downloadReportPdf(s.sample_uid)}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-500/30 text-xs font-semibold transition-all cursor-pointer"
                       >
                         <Download className="w-3.5 h-3.5" />
                         PDF
-                      </a>
+                      </button>
                     </td>
                   </tr>
                 ))

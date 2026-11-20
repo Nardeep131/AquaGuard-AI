@@ -53,3 +53,11 @@ def test_pdf_report_not_found(sample_and_token):
     _, headers = sample_and_token
     res = client.get("/api/water/reports/NON-EXISTENT-UID/pdf", headers=headers)
     assert res.status_code == 404
+
+def test_pdf_report_download_without_auth_header(sample_and_token):
+    sample_uid, _ = sample_and_token
+    # Directly request PDF without auth headers (like a browser clicking a download link)
+    res = client.get(f"/api/water/reports/{sample_uid}/pdf")
+    assert res.status_code == 200
+    assert res.headers["content-type"] == "application/pdf"
+    assert res.content.startswith(b"%PDF")

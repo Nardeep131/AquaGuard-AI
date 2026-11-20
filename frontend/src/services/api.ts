@@ -47,5 +47,25 @@ export const waterService = {
 
   getReportPdfUrl(sampleUid: string): string {
     return `/api/water/reports/${sampleUid}/pdf`;
+  },
+
+  async downloadReportPdf(sampleUid: string, customFilename?: string): Promise<void> {
+    try {
+      const response = await apiClient.get(`/water/reports/${sampleUid}/pdf`, {
+        responseType: 'blob'
+      });
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', customFilename || `AquaGuard_Certificate_${sampleUid}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.warn('Axios blob download error, falling back to direct URL:', err);
+      window.open(`/api/water/reports/${sampleUid}/pdf`, '_blank');
+    }
   }
 };
